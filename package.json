@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "gmail-js": "^1.0.15",
+    "jquery": "^3.6.0"
+  },
+  "name": "21-22_cacamu",
+  "description": "",
+  "version": "1.0.0",
+  "main": "extension.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deps": "npm install",
+    "stage": "mkdir dist || echo Dist already exists.",
+    "bundle": "browserify -o dist/gmailJsLoader.js src/gmailJsLoader.js && browserify -o dist/extension.js src/extension.js",
+    "devbuild": "cp ../gmail.js/src/gmail.js node_modules/gmail-js/src/ && npm run build",
+    "build": "npm run stage && npm run bundle"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MCYP-UniversidadReyJuanCarlos/21-22_cacamu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MCYP-UniversidadReyJuanCarlos/21-22_cacamu/issues"
+  },
+  "homepage": "https://github.com/MCYP-UniversidadReyJuanCarlos/21-22_cacamu#readme"
+}
