@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Phishing Detector",
     "short_name": "antiphishing",
-    "version": "1.1",
+    "version": "1.2",
     "author": "Carlos Cano",
 
     "description": "A Chrome extension which is used to detect possible phishing emails in Gmail.",
@@ -13,6 +13,7 @@
             "js": [
                 "src/extensionInjector.js"
             ],
+            "css":["src/styles/styles.css"],
             "run_at": "document_start"
         }
     ],
