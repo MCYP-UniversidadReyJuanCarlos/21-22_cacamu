@@ -1,5 +1,8 @@
 "use strict";
 
+const fs = require('fs');
+const path = require('path');
+
 // loader-code: wait until gmailjs has finished loading, before triggering actual extensiode-code.
 const loaderId = setInterval(() => {
     if (!window._gmailjs) {
@@ -15,9 +18,33 @@ function startExtension(gmail) {
     console.log("¡Bienvenido a Phishing Detector!");
     window.gmail = gmail;
 
+    // As with JSON, use the Fetch API & ES6
+/*fetch('./data/phishtank.json')
+  .then(response => response.text())
+  .then(dataPhishtank => {
+      console.log(dataPhishtank);
+  	phishtank = JSON.parse(dataPhishtank);
+    urls = phishtank.map(r = r.url);
+  });*/
+
+  var phishtankData = require('./data/phishtank.json');
+  //var phishtankJson = JSON.parse(phishtankData);
+  var urls = phishtankData.map(r => r.url);
+
+    
+    /*let url = 'https://data.phishtank.com/data/online-valid.json';
+
+    fetch(url, {mode: 'no-cors', headers: {"Accept": "application/json", "Content-Type": "application/json", "User-Agent": "Phishtank/Charlie"}})
+    .then(res => res.json())
+    .then(out => console.log(out))
+    .catch(err => console.log(err));*/
+
+    //let urls = phishtank.map(r => r.url);
+
     gmail.observe.on("load", () => {
         const userEmail = gmail.get.user_email();
         console.log("Hola, " + userEmail + ". Bienvenido.");
+        console.log(urls);
 
         gmail.observe.on("view_email", (domEmail) => {
             console.log("Entrando en el email:", domEmail);
