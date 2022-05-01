@@ -67,6 +67,21 @@ function deleteElements(){
 
 // actual extension-code
 function startExtension(gmail) {
+
+    var database = null;
+
+    /*firebase.database().ref('/').once('value', snapshot => {
+        //console.log(snapshot.val());
+        database = snapshot.val();
+        console.log(database);
+    });*/
+
+    /*firebase.database().ref('/').once('value').then( snapshot => {
+        //console.log(snapshot.val());
+        database = snapshot.val();
+        console.log(database);
+    });*/
+
     console.log("¡Bienvenido a Phishing Detector!");
     window.gmail = gmail;
 
@@ -78,7 +93,8 @@ function startExtension(gmail) {
     gmail.observe.on("load", () => {
         const userEmail = gmail.get.user_email();
         console.log("Hola, " + userEmail + ". Bienvenido.");
-        console.log(urls);
+        //console.log(urls);
+        //console.log(database);
 
         gmail.observe.on("view_email", (domEmail) => {
             console.log("Entrando en el email:", domEmail);
@@ -89,10 +105,6 @@ function startExtension(gmail) {
             console.log("Remitente del mensaje (Nombre): ", emailData.from.name);
             console.log("Remitente del mensaje (Email): ", emailData.from.address);
             console.log("lista de destinatarios: ", emailData.to);
-
-            firebase.database().ref('/').once('value', snapshot => {
-                console.log(snapshot.val());
-              });
 
             let isPhishing = false;
             deleteElements();
@@ -107,11 +119,17 @@ function startExtension(gmail) {
                 }
             })
 
-            if(isPhishing){
-                possiblePhishing();
-            } else {
-                everythingOk();
-            }
+            firebase.database().ref('/').once('value').then( snapshot => {
+                //console.log(snapshot.val());
+                database = snapshot.val();
+                console.log(database);
+
+                if(isPhishing){
+                    possiblePhishing();
+                } else {
+                    everythingOk();
+                }
+            });
         });
 
         gmail.observe.on("compose", (compose) => {
