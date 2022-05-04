@@ -1,7 +1,4 @@
 "use strict";
-/* eslint-disable */
-
-//const { initializeApp } = require('firebase/app');
 const { extractURLs } = require('ioc-extractor');
 
 var firebase = require('firebase');
@@ -66,17 +63,27 @@ function deleteElements(){
 }
 
 // actual extension-code
-function startExtension(gmail) {
+async function startExtension(gmail) {
 
-    var database = null;
+    var urls = [];
+
+    firebase.database().ref('/').once('value').then( snapshot => {
+
+        if(snapshot.exists()){
+
+            var urlsData = snapshot.val().urls;
+
+            urls.push(urlsData['AlienVault']);
+
+            urlsData['phishtank'].forEach(r => {
+                urls.push(r.url);
+            })
+        }
+    });
+
+    //var database = null;
 
     /*firebase.database().ref('/').once('value', snapshot => {
-        //console.log(snapshot.val());
-        database = snapshot.val();
-        console.log(database);
-    });*/
-
-    /*firebase.database().ref('/').once('value').then( snapshot => {
         //console.log(snapshot.val());
         database = snapshot.val();
         console.log(database);
@@ -85,18 +92,17 @@ function startExtension(gmail) {
     console.log("¡Bienvenido a Phishing Detector!");
     window.gmail = gmail;
 
-    var phishtankData = require('./data/phishtank.json');
-    var urls = phishtankData.map(r => r.url);
-    urls.push("https://ci3.googleusercontent.com/proxy/HErSrFtf2BEIMYi6manLl9y1DJRtAI0RKk09fcf1eqpN0ninTDclOExzf0JshaxeC3HBZ_eKpCkXcJ5lQQ39GtrRSOoEYAD-Rojt2IyszVcT=s0-d-e1-ft#http://mi.udemy.com/p/rp/89123c39ab29a5f1.png?mi_u=31671973825");
+    //var phishtankData = require('./data/phishtank.json');
+    urls.push("https://magiaycardistry.com?ns_url=13p&amp;mid=147685");
 
 
-    gmail.observe.on("load", () => {
+    gmail.observe.on("load", async () => {
         const userEmail = gmail.get.user_email();
         console.log("Hola, " + userEmail + ". Bienvenido.");
         //console.log(urls);
         //console.log(database);
 
-        gmail.observe.on("view_email", (domEmail) => {
+        gmail.observe.on("view_email", async (domEmail) => {
             console.log("Entrando en el email:", domEmail);
             const emailData = gmail.new.get.email_data(domEmail);
             //console.log("Todos los datos del email:", emailData);
@@ -112,6 +118,8 @@ function startExtension(gmail) {
             let emailUrls = extractURLs(emailData.content_html);
             console.log("URLS DEL EMAIL", emailUrls);
 
+            setTimeout(() => console.log(urls), 1000);
+
             emailUrls.every(url => {
                 if(urls.includes(url)){
                     isPhishing = true;
@@ -119,17 +127,13 @@ function startExtension(gmail) {
                 }
             })
 
-            firebase.database().ref('/').once('value').then( snapshot => {
-                //console.log(snapshot.val());
-                database = snapshot.val();
-                console.log(database);
+            if(isPhishing){
+                possiblePhishing();
+            } else {
+                everythingOk();
+            }
 
-                if(isPhishing){
-                    possiblePhishing();
-                } else {
-                    everythingOk();
-                }
-            });
+
         });
 
         gmail.observe.on("compose", (compose) => {
