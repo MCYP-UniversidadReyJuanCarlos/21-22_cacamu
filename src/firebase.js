@@ -5,13 +5,13 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCZlFeGtKjRDqhc6nmzlZ_VNZSTlQR3RKo",
-  authDomain: "tfm-phishing-iocs.firebaseapp.com",
-  databaseURL: "https://tfm-phishing-iocs-default-rtdb.firebaseio.com",
-  projectId: "tfm-phishing-iocs",
-  storageBucket: "tfm-phishing-iocs.appspot.com",
-  messagingSenderId: "679351493087",
-  appId: "1:679351493087:web:e0fd9ba1fe6a5e2cfe646a"
+  apiKey: "AIzaSyBoV9fBFhcuVLEjmGa9E4_c9sNoXFh57NY",
+  authDomain: "tfm-phishing-iocs-3.firebaseapp.com",
+  projectId: "tfm-phishing-iocs-3",
+  databaseURL: "https://tfm-phishing-iocs-3-default-rtdb.firebaseio.com",
+  storageBucket: "tfm-phishing-iocs-3.appspot.com",
+  messagingSenderId: "343598413138",
+  appId: "1:343598413138:web:8ab3b415ad9561da0bf68b"
 };
 
 // Initialize Firebase

@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "@babel/core": "^7.17.10",
-    "firebase": "4.0.0",
+    "firebase": "^4.4.0",
     "fs": "^0.0.1-security",
-    "gmail-js": "^1.0.15",
+    "gmail-js": "^1.0.23",
     "ioc-extractor": "^4.0.6",
     "jquery": "^3.6.0",
     "path": "^0.12.7"

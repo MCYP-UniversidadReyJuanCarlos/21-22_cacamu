@@ -1,20 +1,20 @@
 "use strict";
-const { extractURLs } = require('ioc-extractor');
+const { extractURLs, extractDomains } = require('ioc-extractor');
 
-var firebase = require('firebase');
+//var firebase = require('firebase');
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCZlFeGtKjRDqhc6nmzlZ_VNZSTlQR3RKo",
-    authDomain: "tfm-phishing-iocs.firebaseapp.com",
-    databaseURL: "https://tfm-phishing-iocs-default-rtdb.firebaseio.com",
-    projectId: "tfm-phishing-iocs",
-    storageBucket: "tfm-phishing-iocs.appspot.com",
-    messagingSenderId: "679351493087",
-    appId: "1:679351493087:web:e0fd9ba1fe6a5e2cfe646a"
+/*const firebaseConfig = {
+    apiKey: "AIzaSyBoV9fBFhcuVLEjmGa9E4_c9sNoXFh57NY",
+    authDomain: "tfm-phishing-iocs-3.firebaseapp.com",
+    projectId: "tfm-phishing-iocs-3",
+    databaseURL: "https://tfm-phishing-iocs-3-default-rtdb.firebaseio.com",
+    storageBucket: "tfm-phishing-iocs-3.appspot.com",
+    messagingSenderId: "343598413138",
+    appId: "1:343598413138:web:8ab3b415ad9561da0bf68b"
   };
 
   // Initialize Firebase
-var app = firebase.initializeApp(firebaseConfig);
+var app = firebase.initializeApp(firebaseConfig);*/
 
 // Get a reference to the database service
 //const database = getDatabase(app);
@@ -33,7 +33,7 @@ function everythingOk(){
     console.log("PARECE QUE NO HAY PHISHING");
 
     var detector = document.createElement("div");
-    detector.innerHTML = "PARECE QUE TODO OK TRANKI";
+    detector.innerHTML = "NO SE HA DETECTADO PHISHING";
     detector.id = "phishing-detector-ok";
 
     var parentDiv = document.querySelector("div.AO").parentNode;
@@ -45,7 +45,7 @@ function possiblePhishing(){
     console.log("CUIDADO QUE PARECE QUE PUEDE HABER PHISHING");
 
     var detector = document.createElement("div");
-    detector.innerHTML = "PARECE QUE TE JUANKEAN CUIDAO";
+    detector.innerHTML = "¡CUIDADO! POSIBLE PHISHING";
     detector.id = "phishing-detector-ko";
 
     var parentDiv = document.querySelector("div.AO").parentNode;
@@ -67,7 +67,7 @@ async function startExtension(gmail) {
 
     var urls = [];
 
-    firebase.database().ref('/').once('value').then( snapshot => {
+    /*firebase.database().ref('/').once('value').then( snapshot => {
 
         if(snapshot.exists()){
 
@@ -79,23 +79,33 @@ async function startExtension(gmail) {
                 urls.push(r.url);
             })
         }
-    });
+    });*/
 
-    //var database = null;
-
-    /*firebase.database().ref('/').once('value', snapshot => {
-        //console.log(snapshot.val());
-        database = snapshot.val();
-        console.log(database);
+    /*var starCountRef = firebase.database().ref('/');
+    starCountRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log(data);
     });*/
 
     console.log("¡Bienvenido a Phishing Detector!");
     window.gmail = gmail;
 
-    //var phishtankData = require('./data/phishtank.json');
-    urls.push("https://magiaycardistry.com?ns_url=13p&amp;mid=147685");
+    var phishtankData = require('./data/phishtank.json');
+    var AlienVaultUrlsData = require('./data/urlsAlienVault.json');
+    var AlienVaultSendersData = require('./data/sendersAlienVault.json');
+    var AlienVaultHashesData = require('./data/fileHashesAlienVault.json');
+    var AlienVaultDomainsData = require('./data/domainsAlienVault.json');
 
+    await phishtankData.forEach(r => {
+        urls.push(r.url);
+    });
 
+    await AlienVaultUrlsData.forEach(url => {
+        urls.push(url);
+    });
+
+    urls.push("");
+    
     gmail.observe.on("load", async () => {
         const userEmail = gmail.get.user_email();
         console.log("Hola, " + userEmail + ". Bienvenido.");
@@ -116,7 +126,9 @@ async function startExtension(gmail) {
             deleteElements();
 
             let emailUrls = extractURLs(emailData.content_html);
+            let emailDomains = extractDomains(emailData.content_html);
             console.log("URLS DEL EMAIL", emailUrls);
+            console.log("Dominios del email", emailDomains);
 
             setTimeout(() => console.log(urls), 1000);
 
