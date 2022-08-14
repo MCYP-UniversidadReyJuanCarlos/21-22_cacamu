@@ -66,6 +66,9 @@ function deleteElements(){
 async function startExtension(gmail) {
 
     var urls = [];
+    var senders = [];
+    var domains = [];
+    var hashes = [];
 
     /*firebase.database().ref('/').once('value').then( snapshot => {
 
@@ -91,20 +94,32 @@ async function startExtension(gmail) {
     window.gmail = gmail;
 
     var phishtankData = require('./data/phishtank.json');
-    var AlienVaultUrlsData = require('./data/urlsAlienVault.json');
-    var AlienVaultSendersData = require('./data/sendersAlienVault.json');
-    var AlienVaultHashesData = require('./data/fileHashesAlienVault.json');
-    var AlienVaultDomainsData = require('./data/domainsAlienVault.json');
-
     await phishtankData.forEach(r => {
         urls.push(r.url);
     });
 
+    var AlienVaultUrlsData = require('./data/urlsAlienVault.json');
     await AlienVaultUrlsData.forEach(url => {
         urls.push(url);
     });
 
+    var AlienVaultSendersData = require('./data/sendersAlienVault.json');
+    await AlienVaultSendersData.forEach(sender => {
+        senders.push(sender);
+    });
+
+    var AlienVaultHashesData = require('./data/fileHashesAlienVault.json');
+    await AlienVaultHashesData.forEach(hash => {
+        hashes.push(hash);
+    });
+
+    var AlienVaultDomainsData = require('./data/domainsAlienVault.json');
+    await AlienVaultDomainsData.forEach(domain => {
+        domains.push(domain);
+    });
+
     urls.push("");
+    senders.push("marketing@tribalchimp.com");
     
     gmail.observe.on("load", async () => {
         const userEmail = gmail.get.user_email();
@@ -113,6 +128,8 @@ async function startExtension(gmail) {
         //console.log(database);
 
         gmail.observe.on("view_email", async (domEmail) => {
+
+
             console.log("Entrando en el email:", domEmail);
             const emailData = gmail.new.get.email_data(domEmail);
             //console.log("Todos los datos del email:", emailData);
@@ -131,9 +148,26 @@ async function startExtension(gmail) {
             console.log("Dominios del email", emailDomains);
 
             setTimeout(() => console.log(urls), 1000);
+            setTimeout(() => console.log(senders), 1000);
+            setTimeout(() => console.log(domains), 1000);
+            setTimeout(() => console.log(hashes), 1000);
 
+            //urls
             emailUrls.every(url => {
                 if(urls.includes(url)){
+                    isPhishing = true;
+                    return false;
+                }
+            })
+
+            //senders
+            if(senders.includes(emailData.from.address)){
+                isPhishing = true;
+            }
+
+            //domains
+            emailDomains.every(domain => {
+                if(domains.includes(domain)){
                     isPhishing = true;
                     return false;
                 }
@@ -145,6 +179,11 @@ async function startExtension(gmail) {
                 everythingOk();
             }
 
+            
+            window.onhashchange = function() {
+                //deleteElements();
+                console.log("me he ido patras como los cangrejos");
+            }  
 
         });
 
