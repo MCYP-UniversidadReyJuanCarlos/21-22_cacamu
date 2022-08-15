@@ -32,8 +32,8 @@ const loaderId = setInterval(() => {
 var iocType = "URL";
 var ioc = "https://www.phishing.com/";
 
-function infoMessage() {
-    var message = "The " + iocType+ " " + ioc + " has previously been marked as possible phishing. Be careful."
+function infoMessage(iocType, ioc) {
+    var message = "The " + iocType + " " + ioc + " has previously been marked as possible phishing. Be careful."
     alert(message);
 }
 
@@ -49,7 +49,7 @@ function everythingOk(){
     parentDiv.insertBefore(detector, currentDiv);
 }
 
-function possiblePhishing(){
+function possiblePhishing(typePhishing, iocPhishing){
     console.log("CUIDADO QUE PARECE QUE PUEDE HABER PHISHING");
 
     var detector = document.createElement("div");
@@ -61,11 +61,11 @@ function possiblePhishing(){
     parentDiv.insertBefore(detector, currentDiv);
 
     var button = document.createElement("button");
-    button.innerHTML = "cositis";
+    button.innerHTML = "More info";
     button.id = "button-info-ko"
     button.onclick = function()
     {
-        infoMessage();
+        infoMessage(typePhishing, iocPhishing);
     }
 
     document.getElementById("phishing-detector-ko").append(button);
@@ -146,7 +146,6 @@ async function startExtension(gmail) {
         domains.push(url);
     });
 
-    urls.push("");
     senders.push("marketing@tribalchimp.com");
     
     gmail.observe.on("load", async () => {
@@ -182,6 +181,7 @@ async function startExtension(gmail) {
             emailUrls.every(url => {
                 if(urls.includes(url)){
                     isPhishing = true;
+                    possiblePhishing("url", url);
                     return false;
                 }
             })
@@ -189,19 +189,19 @@ async function startExtension(gmail) {
             //senders
             if(senders.includes(emailData.from.address)){
                 isPhishing = true;
+                possiblePhishing("sender", emailData.from.address);
             }
 
             //domains
             emailDomains.every(domain => {
                 if(domains.includes(domain)){
                     isPhishing = true;
+                    possiblePhishing("domain", domain);
                     return false;
                 }
             })
 
-            if(isPhishing){
-                possiblePhishing();
-            } else {
+            if(!isPhishing){
                 everythingOk();
             }
             
