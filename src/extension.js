@@ -29,6 +29,14 @@ const loaderId = setInterval(() => {
     startExtension(window._gmailjs);
 }, 100);
 
+var iocType = "URL";
+var ioc = "https://www.phishing.com/";
+
+function infoMessage() {
+    var message = "The " + iocType+ " " + ioc + " has previously been marked as possible phishing. Be careful."
+    alert(message);
+}
+
 function everythingOk(){
     console.log("PARECE QUE NO HAY PHISHING");
 
@@ -51,6 +59,16 @@ function possiblePhishing(){
     var parentDiv = document.querySelector("div.AO").parentNode;
     var currentDiv = document.querySelector("div.AO");
     parentDiv.insertBefore(detector, currentDiv);
+
+    var button = document.createElement("button");
+    button.innerHTML = "cositis";
+    button.id = "button-info-ko"
+    button.onclick = function()
+    {
+        infoMessage();
+    }
+
+    document.getElementById("phishing-detector-ko").append(button);
 }
 
 function deleteElements(){
@@ -103,6 +121,11 @@ async function startExtension(gmail) {
         urls.push(url);
     });
 
+    var TweetFeedUrlsData = require('./data/urlsTweetFeed.json');
+    await TweetFeedUrlsData.forEach(url => {
+        urls.push(url);
+    });
+
     var AlienVaultSendersData = require('./data/sendersAlienVault.json');
     await AlienVaultSendersData.forEach(sender => {
         senders.push(sender);
@@ -118,14 +141,17 @@ async function startExtension(gmail) {
         domains.push(domain);
     });
 
+    var TweetFeedDomainsData = require('./data/domainsTweetFeed.json');
+    await TweetFeedDomainsData.forEach(url => {
+        domains.push(url);
+    });
+
     urls.push("");
     senders.push("marketing@tribalchimp.com");
     
     gmail.observe.on("load", async () => {
         const userEmail = gmail.get.user_email();
         console.log("Hola, " + userEmail + ". Bienvenido.");
-        //console.log(urls);
-        //console.log(database);
 
         gmail.observe.on("view_email", async (domEmail) => {
 
@@ -178,7 +204,6 @@ async function startExtension(gmail) {
             } else {
                 everythingOk();
             }
-
             
             window.onhashchange = function() {
                 //deleteElements();
