@@ -1,24 +1,6 @@
 "use strict";
 const { extractURLs, extractDomains } = require('ioc-extractor');
 
-//var firebase = require('firebase');
-
-/*const firebaseConfig = {
-    apiKey: "AIzaSyBoV9fBFhcuVLEjmGa9E4_c9sNoXFh57NY",
-    authDomain: "tfm-phishing-iocs-3.firebaseapp.com",
-    projectId: "tfm-phishing-iocs-3",
-    databaseURL: "https://tfm-phishing-iocs-3-default-rtdb.firebaseio.com",
-    storageBucket: "tfm-phishing-iocs-3.appspot.com",
-    messagingSenderId: "343598413138",
-    appId: "1:343598413138:web:8ab3b415ad9561da0bf68b"
-  };
-
-  // Initialize Firebase
-var app = firebase.initializeApp(firebaseConfig);*/
-
-// Get a reference to the database service
-//const database = getDatabase(app);
-
 // loader-code: wait until gmailjs has finished loading, before triggering actual extensiode-code.
 const loaderId = setInterval(() => {
     if (!window._gmailjs) {
@@ -86,34 +68,13 @@ async function startExtension(gmail) {
     var urls = [];
     var senders = [];
     var domains = [];
-    var hashes = [];
-
-    /*firebase.database().ref('/').once('value').then( snapshot => {
-
-        if(snapshot.exists()){
-
-            var urlsData = snapshot.val().urls;
-
-            urls.push(urlsData['AlienVault']);
-
-            urlsData['phishtank'].forEach(r => {
-                urls.push(r.url);
-            })
-        }
-    });*/
-
-    /*var starCountRef = firebase.database().ref('/');
-    starCountRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
-    });*/
 
     console.log("¡Bienvenido a Phishing Detector!");
     window.gmail = gmail;
 
     var phishtankData = require('./data/phishtank.json');
-    await phishtankData.forEach(r => {
-        urls.push(r.url);
+    await phishtankData.forEach(url => {
+        urls.push(url);
     });
 
     var AlienVaultUrlsData = require('./data/urlsAlienVault.json');
@@ -131,11 +92,6 @@ async function startExtension(gmail) {
         senders.push(sender);
     });
 
-    var AlienVaultHashesData = require('./data/fileHashesAlienVault.json');
-    await AlienVaultHashesData.forEach(hash => {
-        hashes.push(hash);
-    });
-
     var AlienVaultDomainsData = require('./data/domainsAlienVault.json');
     await AlienVaultDomainsData.forEach(domain => {
         domains.push(domain);
@@ -145,8 +101,6 @@ async function startExtension(gmail) {
     await TweetFeedDomainsData.forEach(url => {
         domains.push(url);
     });
-
-    senders.push("marketing@tribalchimp.com");
     
     gmail.observe.on("load", async () => {
         const userEmail = gmail.get.user_email();
@@ -157,7 +111,6 @@ async function startExtension(gmail) {
 
             console.log("Entrando en el email:", domEmail);
             const emailData = gmail.new.get.email_data(domEmail);
-            //console.log("Todos los datos del email:", emailData);
             console.log("Asunto del mensaje: ", emailData.subject);
             console.log("Cuerpo del mensaje: ", emailData.content_html);
             console.log("Remitente del mensaje (Nombre): ", emailData.from.name);
@@ -175,7 +128,6 @@ async function startExtension(gmail) {
             setTimeout(() => console.log(urls), 1000);
             setTimeout(() => console.log(senders), 1000);
             setTimeout(() => console.log(domains), 1000);
-            setTimeout(() => console.log(hashes), 1000);
 
             //urls
             emailUrls.every(url => {
@@ -204,11 +156,6 @@ async function startExtension(gmail) {
             if(!isPhishing){
                 everythingOk();
             }
-            
-            window.onhashchange = function() {
-                //deleteElements();
-                console.log("me he ido patras como los cangrejos");
-            }  
 
         });
 
