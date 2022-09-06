@@ -158,9 +158,5 @@ async function startExtension(gmail) {
             }
 
         });
-
-        gmail.observe.on("compose", (compose) => {
-            console.log("¡Nueva ventana de redacción de correo!", compose);
-        });
     });
 }
